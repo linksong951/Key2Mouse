@@ -413,19 +413,9 @@ class Program
             // 按键左按下
             if (Dkey == KeyCode.J)
             {
-                Simulate.Events()
-                        .Click(KeyCode.Left)
-                        .Invoke();
+                KeyEvent(KeyCode.Left);
                 Console.WriteLine($"--模式2--按键左按下");
             }
-            // // 按键左松开
-            // if (Ukey == KeyCode.J)
-            // {
-            //     Simulate.Events()
-            //             .Release(KeyCode.Left)
-            //             .Invoke();
-            //     Console.WriteLine($"--模式2--按键左松开");
-            // }
             // 按键下按下
             if (Dkey == KeyCode.K)
             {
@@ -542,5 +532,15 @@ class Program
         #endregion
     }
 
-
+    /// <summary>
+    /// 暂时留给上下左右键
+    /// </summary>
+    /// <param name="keyCode"></param>
+    public static void KeyEvent(KeyCode keyCode)
+    {
+        Simulate.Events()
+            .Click(KeyCode.Left)
+            .Invoke()
+            ;
+    }
 }
