@@ -403,7 +403,6 @@ class Program
             #endregion
         }
         #endregion
-
         #region 模式2
 
         #endregion
