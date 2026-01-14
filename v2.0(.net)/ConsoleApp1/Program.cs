@@ -306,29 +306,53 @@ class Program
                 PutCursor_xy(0, y);
                 System.Console.WriteLine($"--模式1--鼠标下移动:{y * BasicsSpeed} 坐标");
             }
-            // 左键单击
+            // 鼠标左键按下
             if (Dkey == KeyCode.A)
             {
                 WindowsInput.Simulate.Events()
-                        .Click(ButtonCode.Left)
+                        .Hold(ButtonCode.Left)
                         .Invoke();
-                System.Console.WriteLine("当前动作:左键单击");
+                System.Console.WriteLine("当前动作:鼠标左键按下");
             }
-            // 中键单击
+            // 鼠标左键松开
+            if (Ukey == KeyCode.A)
+            {
+                WindowsInput.Simulate.Events()
+                        .Release(ButtonCode.Left)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:鼠标左键松开");
+            }
+            // 鼠标中键按下
             if (Dkey == KeyCode.S)
             {
                 WindowsInput.Simulate.Events()
-                        .Click(ButtonCode.Middle)
+                        .Hold(ButtonCode.Middle)
                         .Invoke();
-                System.Console.WriteLine("当前动作:中键单击");
+                System.Console.WriteLine("当前动作:鼠标中键按下");
             }
-            // 右键单击
+            // 鼠标中键松开
+            if (Ukey == KeyCode.S)
+            {
+                WindowsInput.Simulate.Events()
+                        .Release(ButtonCode.Middle)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:鼠标中键松开");
+            }
+            // 鼠标右键按下
             if (Dkey == KeyCode.F)
             {
                 WindowsInput.Simulate.Events()
-                        .Click(ButtonCode.Right)
+                        .Hold(ButtonCode.Right)
                         .Invoke();
-                System.Console.WriteLine("当前动作:右键单击");
+                System.Console.WriteLine("当前动作:鼠标右键按下");
+            }
+            // 鼠标右键松开
+            if (Ukey == KeyCode.F)
+            {
+                WindowsInput.Simulate.Events()
+                        .Release(ButtonCode.Right)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:鼠标右键松开");
             }
             // 鼠标滚轮上滑
             if (Dkey == KeyCode.H)
