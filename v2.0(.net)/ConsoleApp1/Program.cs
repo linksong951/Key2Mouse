@@ -163,7 +163,7 @@ class Program
         {
             y = 0;
         }
-        WindowsInput.Simulate.Events()
+        Simulate.Events()
             .MoveTo(x, y)
             .Invoke();
     }
@@ -171,7 +171,7 @@ class Program
 
     private static void Keyboard_keyEvent(object sender, EventSourceEventArgs<KeyboardEvent> e)
     {
-        e.Next_Hook_Enabled = false;
+        e.Next_Hook_Enabled = !KeyMonitorState;
         var Dkey = e.Data?.KeyDown?.Key;
         var Ukey = e.Data?.KeyUp?.Key;
 
@@ -183,75 +183,75 @@ class Program
         if (Dkey == KeyCode.LAlt)
         {
             LeftAltState = true;
-            System.Console.WriteLine("LAlt按下");
+            Console.WriteLine($"LeftAltState:{LeftAltState}");
         }
         // LAlt松开
         if (Ukey == KeyCode.LAlt)
         {
             LeftAltState = false;
-            System.Console.WriteLine("LAlt松开");
+            Console.WriteLine($"LeftAltState:{LeftAltState}");
         }
         // 按键J按下
         if (Dkey == KeyCode.J)
         {
             KeyJState = true;
-            System.Console.WriteLine("按键J按下");
+            Console.WriteLine($"KeyJState:{KeyJState}");
         }
         // 按键J松开
         if (Ukey == KeyCode.J)
         {
             KeyJState = false;
-            System.Console.WriteLine("按键J松开");
+            Console.WriteLine($"KeyJState:{KeyJState}");
         }
         // 按键K按下
         if (Dkey == KeyCode.K)
         {
             KeyKState = true;
-            System.Console.WriteLine("按键K按下");
+            Console.WriteLine($"KeyKState:{KeyKState}");
         }
         // 按键K松开
         if (Ukey == KeyCode.K)
         {
             KeyKState = false;
-            System.Console.WriteLine("按键K松开");
+            Console.WriteLine($"KeyKState:{KeyKState}");
         }
         // 按键I按下
         if (Dkey == KeyCode.I)
         {
             KeyIState = true;
-            System.Console.WriteLine("按键I按下");
+            Console.WriteLine($"KeyIState:{KeyIState}");
         }
         // 按键I松开
         if (Ukey == KeyCode.I)
         {
             KeyIState = false;
-            System.Console.WriteLine("按键I松开");
+            Console.WriteLine($"KeyIState:{KeyIState}");
         }
         // 按键L按下
         if (Dkey == KeyCode.L)
         {
             KeyLState = true;
-            System.Console.WriteLine("按键L按下");
+            Console.WriteLine($"KeyLState:{KeyLState}");
         }
         // 按键L松开
         if (Ukey == KeyCode.L)
         {
             KeyLState = false;
-            System.Console.WriteLine("按键L松开");
+            Console.WriteLine($"KeyLState:{KeyLState}");
         }
         // 按键Space按下
         if (Dkey == KeyCode.Space)
         {
             BasicsSpeed = 9;
             SpaceState = true;
-            System.Console.WriteLine("按键Space按下");
+            Console.WriteLine($"SpaceState:{SpaceState}");
         }
         // 按键Space松开
         if (Ukey == KeyCode.Space)
         {
             BasicsSpeed = 3;
             SpaceState = false;
-            System.Console.WriteLine("按键Space松开");
+            Console.WriteLine($"SpaceState:{SpaceState}");
         }
         #endregion
 
@@ -261,8 +261,11 @@ class Program
         {
             // 取反
             KeyMonitorState = !KeyMonitorState;
-            System.Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState}");
-            System.Console.WriteLine("alt+q组合键已按下");
+
+            // 键盘监听变量KeyMonitorState为true则组织默认键盘输入反之则不阻止
+            e.Next_Hook_Enabled = !KeyMonitorState;
+            Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState}");
+            Console.WriteLine("alt+q组合键已按下");
         }
         #endregion
         // 切换模式
@@ -270,7 +273,7 @@ class Program
         {
             CurrentMode = !CurrentMode;
             string r = CurrentMode == true ? "模式1" : "模式2";
-            System.Console.WriteLine($"--切换为模式:{r}");
+            Console.WriteLine($"--切换为模式:{r}");
         }
 
         #region 模式1 
@@ -282,21 +285,21 @@ class Program
             {
                 int x = MouseMovementSpeed2;
                 PutCursor_xy(x, 0);
-                System.Console.WriteLine($"--模式1--鼠标左移动:{x * BasicsSpeed} 坐标");
+                Console.WriteLine($"--模式1--鼠标左移动:{x * BasicsSpeed} 坐标");
             }
             // 鼠标右移动
             if (Dkey == KeyCode.L)
             {
                 int x = MouseMovementSpeed1;
                 PutCursor_xy(x, 0);
-                System.Console.WriteLine($"--模式1--鼠标右移动:{x * BasicsSpeed} 坐标");
+                Console.WriteLine($"--模式1--鼠标右移动:{x * BasicsSpeed} 坐标");
             }
             // 鼠标上移动
             if (Dkey == KeyCode.I)
             {
                 int y = MouseMovementSpeed2;
                 PutCursor_xy(0, y);
-                System.Console.WriteLine($"--模式1--鼠标上移动:{y * BasicsSpeed} 坐标");
+                Console.WriteLine($"--模式1--鼠标上移动:{y * BasicsSpeed} 坐标");
             }
             // 鼠标下移动
             if (Dkey == KeyCode.K)
@@ -304,67 +307,67 @@ class Program
                 int y = MouseMovementSpeed1;
 
                 PutCursor_xy(0, y);
-                System.Console.WriteLine($"--模式1--鼠标下移动:{y * BasicsSpeed} 坐标");
+                Console.WriteLine($"--模式1--鼠标下移动:{y * BasicsSpeed} 坐标");
             }
             // 鼠标左键按下
             if (Dkey == KeyCode.A)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Hold(ButtonCode.Left)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标左键按下");
+                Console.WriteLine("当前动作:鼠标左键按下");
             }
             // 鼠标左键松开
             if (Ukey == KeyCode.A)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Release(ButtonCode.Left)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标左键松开");
+                Console.WriteLine("当前动作:鼠标左键松开");
             }
             // 鼠标中键按下
             if (Dkey == KeyCode.S)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Hold(ButtonCode.Middle)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标中键按下");
+                Console.WriteLine("当前动作:鼠标中键按下");
             }
             // 鼠标中键松开
             if (Ukey == KeyCode.S)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Release(ButtonCode.Middle)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标中键松开");
+                Console.WriteLine("当前动作:鼠标中键松开");
             }
             // 鼠标右键按下
             if (Dkey == KeyCode.F)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Hold(ButtonCode.Right)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标右键按下");
+                Console.WriteLine("当前动作:鼠标右键按下");
             }
             // 鼠标右键松开
             if (Ukey == KeyCode.F)
             {
-                WindowsInput.Simulate.Events()
+                Simulate.Events()
                         .Release(ButtonCode.Right)
                         .Invoke();
-                System.Console.WriteLine("当前动作:鼠标右键松开");
+                Console.WriteLine("当前动作:鼠标右键松开");
             }
             // 鼠标滚轮上滑
             if (Dkey == KeyCode.H)
             {
                 VerticalScroll(-120);
-                System.Console.WriteLine("当前动作:鼠标滚轮上滑");
+                Console.WriteLine("当前动作:鼠标滚轮上滑");
             }
             // 鼠标滚轮下滑
             if (Dkey == KeyCode.O)
             {
                 VerticalScroll(120);
-                System.Console.WriteLine("当前动作:鼠标滚轮下滑");
+                Console.WriteLine("当前动作:鼠标滚轮下滑");
             }
 
             #region 优化操作体验
@@ -374,7 +377,7 @@ class Program
                 int x = MouseMovementSpeed4;
                 int y = MouseMovementSpeed4;
                 PutCursor_xy(x, y);
-                System.Console.WriteLine($"--模式1--左上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+                Console.WriteLine($"--模式1--左上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
             }
             // 左下角移动
             if (Dkey == KeyCode.J && KeyKState || Dkey == KeyCode.K && KeyJState)
@@ -382,7 +385,7 @@ class Program
                 int x = MouseMovementSpeed4;
                 int y = MouseMovementSpeed3;
                 PutCursor_xy(x, y);
-                System.Console.WriteLine($"--模式1--左下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+                Console.WriteLine($"--模式1--左下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
             }
             // 右下角移动
             if (Dkey == KeyCode.K && KeyLState || Dkey == KeyCode.L && KeyKState)
@@ -390,7 +393,7 @@ class Program
                 int x = MouseMovementSpeed3;
                 int y = MouseMovementSpeed3;
                 PutCursor_xy(x, y);
-                System.Console.WriteLine($"--模式1--右下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+                Console.WriteLine($"--模式1--右下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
             }
             // 右上角移动
             if (Dkey == KeyCode.I && KeyLState || Dkey == KeyCode.L && KeyIState)
@@ -398,13 +401,144 @@ class Program
                 int x = MouseMovementSpeed3;
                 int y = MouseMovementSpeed4;
                 PutCursor_xy(x, y);
-                System.Console.WriteLine($"--模式1--右上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+                Console.WriteLine($"--模式1--右上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
             }
             #endregion
         }
         #endregion
         #region 模式2
-
+        // 键盘监听状态变量为false并且映射模式为false(2)
+        if (KeyMonitorState && CurrentMode == false)
+        {
+            // 按键左按下
+            if (Dkey == KeyCode.J)
+            {
+                Simulate.Events()
+                        .Click(KeyCode.Left)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键左按下");
+            }
+            // // 按键左松开
+            // if (Ukey == KeyCode.J)
+            // {
+            //     Simulate.Events()
+            //             .Release(KeyCode.Left)
+            //             .Invoke();
+            //     Console.WriteLine($"--模式2--按键左松开");
+            // }
+            // 按键下按下
+            if (Dkey == KeyCode.K)
+            {
+                Simulate.Events()
+                        .Click(KeyCode.Down)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键下按下");
+            }
+            // // 按键下松开
+            // if (Ukey == KeyCode.K)
+            // {
+            //     Simulate.Events()
+            //             .Release(KeyCode.Down)
+            //             .Invoke();
+            //     Console.WriteLine($"--模式2--按键下松开");
+            // }
+            // 按键上按下
+            if (Dkey == KeyCode.I)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.Up)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键上按下");
+            }
+            // 按键上松开
+            if (Ukey == KeyCode.I)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.Up)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键上松开");
+            }
+            // 按键右按下
+            if (Dkey == KeyCode.L)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.Right)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键右按下");
+            }
+            // 按键右松开
+            if (Ukey == KeyCode.L)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.Right)
+                        .Invoke();
+                Console.WriteLine($"--模式2--按键右松开");
+            }
+            // Home键按下
+            if (Dkey == KeyCode.A)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.Home)
+                        .Invoke();
+                Console.WriteLine($"--模式2--Home键按下");
+            }
+            // Home键松开
+            if (Ukey == KeyCode.A)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.Home)
+                        .Invoke();
+                Console.WriteLine($"--模式2--Home键松开");
+            }
+            // End键按下
+            if (Dkey == KeyCode.F)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.End)
+                        .Invoke();
+                Console.WriteLine($"--模式2--End键按下");
+            }
+            // End键松开
+            if (Ukey == KeyCode.F)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.End)
+                        .Invoke();
+                Console.WriteLine($"--模式2--End键松开");
+            }
+            // PageUp键按下
+            if (Dkey == KeyCode.S)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.PageUp)
+                        .Invoke();
+                Console.WriteLine($"--模式2--PageUp键按下");
+            }
+            // PageUp键松开
+            if (Ukey == KeyCode.S)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.PageUp)
+                        .Invoke();
+                Console.WriteLine($"--模式2--PageUp键松开");
+            }
+            // PageDown键按下
+            if (Dkey == KeyCode.D)
+            {
+                Simulate.Events()
+                        .Hold(KeyCode.PageDown)
+                        .Invoke();
+                Console.WriteLine($"--模式2--PageDown键按下");
+            }
+            // PageDown键松开
+            if (Ukey == KeyCode.D)
+            {
+                Simulate.Events()
+                        .Release(KeyCode.PageDown)
+                        .Invoke();
+                Console.WriteLine($"--模式2--PageDown键松开");
+            }
+        }
         #endregion
     }
 
