@@ -376,10 +376,8 @@ class Program
                 PutCursor_xy(x, y);
                 System.Console.WriteLine($"--模式1--右上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
             }
+            #endregion
         }
-
-        #endregion
-
         #endregion
 
         #region 模式2
