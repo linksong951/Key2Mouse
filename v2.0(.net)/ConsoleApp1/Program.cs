@@ -9,6 +9,7 @@ namespace ConsoleApp1;
 
 class Program
 {
+
     #region 按键状态
 
     /// <summary>
@@ -17,7 +18,7 @@ class Program
     private static bool KeyMonitorState = false;
 
     /// <summary>
-    /// 模式 true为模式1 false为模式2
+    /// 映射模式 true为模式1 false为模式2
     /// </summary>
     private static bool CurrentMode = true;
 
@@ -25,6 +26,11 @@ class Program
     /// 左Alt状态
     /// </summary>
     private static bool LeftAltState { get; set; }
+
+    /// <summary>
+    /// 空格状态
+    /// </summary>
+    private static bool SpaceState { get; set; }
 
     /// <summary>
     /// J键状态
@@ -45,14 +51,34 @@ class Program
     /// I键状态
     /// </summary>
     private static bool KeyIState { get; set; }
-
     #endregion
 
-
+    #region 鼠标相关变量
     /// <summary>
     /// 鼠标移动的基础倍率
     /// </summary>
     private static int BasicsSpeed = 5;
+
+    /// <summary>
+    /// 鼠标移动速度 正数
+    /// </summary>
+    private static int MouseMovementSpeed1 = 3;
+
+    /// <summary>
+    /// 鼠标移动速度 负数
+    /// </summary>
+    private static int MouseMovementSpeed2 = -3;
+
+    /// <summary>
+    /// 鼠标移动速度 (左上,左下,右上,右下优化) 正数
+    /// </summary>
+    private static int MouseMovementSpeed3 = 3;
+
+    /// <summary>
+    /// 鼠标移动速度 (左上,左下,右上,右下优化) 负数
+    /// </summary>
+    private static int MouseMovementSpeed4 = -3;
+    #endregion
 
     // 1. 定义与C语言中POINT结构对应的结构体
     [StructLayout(LayoutKind.Sequential)]
@@ -213,6 +239,20 @@ class Program
             KeyLState = false;
             System.Console.WriteLine("按键L松开");
         }
+        // 按键Space按下
+        if (Dkey == KeyCode.Space)
+        {
+            BasicsSpeed = 9;
+            SpaceState = true;
+            System.Console.WriteLine("按键Space按下");
+        }
+        // 按键Space松开
+        if (Ukey == KeyCode.Space)
+        {
+            BasicsSpeed = 3;
+            SpaceState = false;
+            System.Console.WriteLine("按键Space松开");
+        }
         #endregion
 
         #region 组合键处理
@@ -234,78 +274,110 @@ class Program
         }
 
         #region 模式1 
-        // 鼠标左移动
-        if (Dkey == KeyCode.J && KeyMonitorState && CurrentMode)
+        // 键盘监听状态变量为true并且映射模式为true(1)
+        if (KeyMonitorState && CurrentMode)
         {
-            int x = -5;
-            PutCursor_xy(x, 0);
-            System.Console.WriteLine($"--模式1--鼠标左移动:{x * BasicsSpeed} 坐标");
-        }
-        // 鼠标右移动
-        if (Dkey == KeyCode.L && KeyMonitorState && CurrentMode)
-        {
-            int x = 5;
-            PutCursor_xy(x, 0);
-            System.Console.WriteLine($"--模式1--鼠标右移动:{x * BasicsSpeed} 坐标");
-        }
-        // 鼠标上移动
-        if (Dkey == KeyCode.I && KeyMonitorState && CurrentMode)
-        {
-            int y = -5;
-            PutCursor_xy(0, y);
-            System.Console.WriteLine($"--模式1--鼠标上移动:{y * BasicsSpeed} 坐标");
-        }
-        // 鼠标下移动
-        if (Dkey == KeyCode.K && KeyMonitorState && CurrentMode)
-        {
-            int y = 5;
+            // 鼠标左移动
+            if (Dkey == KeyCode.J)
+            {
+                int x = MouseMovementSpeed2;
+                PutCursor_xy(x, 0);
+                System.Console.WriteLine($"--模式1--鼠标左移动:{x * BasicsSpeed} 坐标");
+            }
+            // 鼠标右移动
+            if (Dkey == KeyCode.L)
+            {
+                int x = MouseMovementSpeed1;
+                PutCursor_xy(x, 0);
+                System.Console.WriteLine($"--模式1--鼠标右移动:{x * BasicsSpeed} 坐标");
+            }
+            // 鼠标上移动
+            if (Dkey == KeyCode.I)
+            {
+                int y = MouseMovementSpeed2;
+                PutCursor_xy(0, y);
+                System.Console.WriteLine($"--模式1--鼠标上移动:{y * BasicsSpeed} 坐标");
+            }
+            // 鼠标下移动
+            if (Dkey == KeyCode.K)
+            {
+                int y = MouseMovementSpeed1;
 
-            PutCursor_xy(0, y);
-            System.Console.WriteLine($"--模式1--鼠标下移动:{y * BasicsSpeed} 坐标");
-        }
-        // 左键单击
-        if (Dkey == KeyCode.A && KeyMonitorState && CurrentMode)
-        {
-            WindowsInput.Simulate.Events()
-                    .Click(ButtonCode.Left)
-                    .Invoke();
-            System.Console.WriteLine("当前动作:左键单击");
-        }
-        // 中键单击
-        if (Dkey == KeyCode.S && KeyMonitorState && CurrentMode)
-        {
-            WindowsInput.Simulate.Events()
-                    .Click(ButtonCode.Middle)
-                    .Invoke();
-            System.Console.WriteLine("当前动作:中键单击");
-        }
-        // 右键单击
-        if (Dkey == KeyCode.F && KeyMonitorState && CurrentMode)
-        {
-            WindowsInput.Simulate.Events()
-                    .Click(ButtonCode.Right)
-                    .Invoke();
-            System.Console.WriteLine("当前动作:右键单击");
-        }
-        // 鼠标滚轮上滑
-        if (Dkey == KeyCode.H && KeyMonitorState && CurrentMode)
-        {
-            VerticalScroll(-120);
-            System.Console.WriteLine("当前动作:鼠标滚轮上滑");
-        }
-        // 鼠标滚轮下滑
-        if (Dkey == KeyCode.O && KeyMonitorState && CurrentMode)
-        {
-            VerticalScroll(120);
-            System.Console.WriteLine("当前动作:鼠标滚轮下滑");
+                PutCursor_xy(0, y);
+                System.Console.WriteLine($"--模式1--鼠标下移动:{y * BasicsSpeed} 坐标");
+            }
+            // 左键单击
+            if (Dkey == KeyCode.A)
+            {
+                WindowsInput.Simulate.Events()
+                        .Click(ButtonCode.Left)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:左键单击");
+            }
+            // 中键单击
+            if (Dkey == KeyCode.S)
+            {
+                WindowsInput.Simulate.Events()
+                        .Click(ButtonCode.Middle)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:中键单击");
+            }
+            // 右键单击
+            if (Dkey == KeyCode.F)
+            {
+                WindowsInput.Simulate.Events()
+                        .Click(ButtonCode.Right)
+                        .Invoke();
+                System.Console.WriteLine("当前动作:右键单击");
+            }
+            // 鼠标滚轮上滑
+            if (Dkey == KeyCode.H)
+            {
+                VerticalScroll(-120);
+                System.Console.WriteLine("当前动作:鼠标滚轮上滑");
+            }
+            // 鼠标滚轮下滑
+            if (Dkey == KeyCode.O)
+            {
+                VerticalScroll(120);
+                System.Console.WriteLine("当前动作:鼠标滚轮下滑");
+            }
+
+            #region 优化操作体验
+            // 左上角移动
+            if (Dkey == KeyCode.J && KeyIState || Dkey == KeyCode.I && KeyJState)
+            {
+                int x = MouseMovementSpeed4;
+                int y = MouseMovementSpeed4;
+                PutCursor_xy(x, y);
+                System.Console.WriteLine($"--模式1--左上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+            }
+            // 左下角移动
+            if (Dkey == KeyCode.J && KeyKState || Dkey == KeyCode.K && KeyJState)
+            {
+                int x = MouseMovementSpeed4;
+                int y = MouseMovementSpeed3;
+                PutCursor_xy(x, y);
+                System.Console.WriteLine($"--模式1--左下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+            }
+            // 右下角移动
+            if (Dkey == KeyCode.K && KeyLState || Dkey == KeyCode.L && KeyKState)
+            {
+                int x = MouseMovementSpeed3;
+                int y = MouseMovementSpeed3;
+                PutCursor_xy(x, y);
+                System.Console.WriteLine($"--模式1--右下角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+            }
+            // 右上角移动
+            if (Dkey == KeyCode.I && KeyLState || Dkey == KeyCode.L && KeyIState)
+            {
+                int x = MouseMovementSpeed3;
+                int y = MouseMovementSpeed4;
+                PutCursor_xy(x, y);
+                System.Console.WriteLine($"--模式1--右上角移动=== x:{x * BasicsSpeed} === y:{y * BasicsSpeed}");
+            }
         }
 
-        #region 优化操作体验
-        // 左上角移动
-        if (Dkey == KeyCode.J || Dkey == KeyCode.I && KeyMonitorState && CurrentMode)
-        {
-            
-        }
         #endregion
 
         #endregion
