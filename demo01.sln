@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo04", "demo04\demo04.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo05", "demo05\demo05.csproj", "{9A9C024F-D588-4FE2-B4BF-D1CECC467C9B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v2.0(.net)", "v2.0(.net)", "{51EC432D-7DA2-A54B-83DB-6884915F4AE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "v2.0(.net)\ConsoleApp1\ConsoleApp1.csproj", "{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,8 +73,23 @@ Global
 		{9A9C024F-D588-4FE2-B4BF-D1CECC467C9B}.Release|x64.Build.0 = Release|Any CPU
 		{9A9C024F-D588-4FE2-B4BF-D1CECC467C9B}.Release|x86.ActiveCfg = Release|Any CPU
 		{9A9C024F-D588-4FE2-B4BF-D1CECC467C9B}.Release|x86.Build.0 = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|x64.Build.0 = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Debug|x86.Build.0 = Debug|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|x64.Build.0 = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E2D2FE24-DEAC-46BE-9AD9-FF162CD5F3C8} = {51EC432D-7DA2-A54B-83DB-6884915F4AE5}
 	EndGlobalSection
 EndGlobal
