@@ -334,6 +334,13 @@ class Program
             if (!KeyMonitorState)
             {  
                 KeyMonitorState2 = false;
+                // 播报关闭键盘模拟鼠标
+                PlayEmbeddedBeep("关闭键盘模拟鼠标");
+            }
+            else
+            {
+                // 播报开启键盘模拟鼠标
+                PlayEmbeddedBeep("开启键盘模拟鼠标"); 
             }
             Console.WriteLine("alt+q组合键已按 下");
         }
