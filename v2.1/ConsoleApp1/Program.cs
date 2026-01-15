@@ -20,6 +20,11 @@ class Program
     private static bool KeyMonitorState = false;
 
     /// <summary>
+    /// 键盘操作鼠标监听是否开启2
+    /// </summary>
+    private static bool KeyMonitorState2 = false;
+
+    /// <summary>
     /// 左Alt状态
     /// </summary>
     private static bool LeftAltState { get; set; }
@@ -128,6 +133,7 @@ class Program
     private static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
     static async Task Main(string[] args)
     {
+
         // 创建监听
         using (var keyboard = WindowsInput.Capture.Global.KeyboardAsync())
         {
@@ -204,7 +210,7 @@ class Program
                 }
             }
         }
-        string d=CursorSpeedMode.ToString();
+        string d = CursorSpeedMode.ToString();
         PlayEmbeddedBeep(d);
         System.Console.WriteLine($"当前挡位:{CursorSpeedMode}");
         System.Console.WriteLine($"基础速率:{BasicsSpeed}");
@@ -319,15 +325,28 @@ class Program
         }
         #endregion
 
-        #region 组合键处理 
+        #region 组合键处U理 
         // 监听alt+q组合键
         if (Dkey == KeyCode.Q && LeftAltState)
         {
             // 取反
             KeyMonitorState = !KeyMonitorState;
+            if (!KeyMonitorState)
+            {  
+                KeyMonitorState2 = false;
+            }
+            Console.WriteLine("alt+q组合键已按 下");
+        }
+        // 监听CapsLock键
+        if (Dkey == KeyCode.CapsLock && KeyMonitorState)
+        {
+            e.Next_Hook_Enabled = false;
+        }
+        if (Ukey == KeyCode.CapsLock && KeyMonitorState)
+        {
+            KeyMonitorState2 = !KeyMonitorState2;
             e.Next_Hook_Enabled = !KeyMonitorState;
-
-            if (KeyMonitorState)
+            if (KeyMonitorState2)
             {
                 PlayEmbeddedBeep("开启键盘监听");
             }
@@ -335,14 +354,12 @@ class Program
             {
                 PlayEmbeddedBeep("关闭键盘监听");
             }
-            Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState}");
-            Console.WriteLine("alt+q组合键已按下");
-            SystemSounds.Beep.Play();
+            Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState2}");
         }
         #endregion
 
         // 键盘监听状态变量为true
-        if (KeyMonitorState)
+        if (KeyMonitorState && KeyMonitorState2)
         {
             // 鼠标左移动
             if (Dkey == KeyCode.J)
