@@ -9,6 +9,15 @@
 
   <ItemGroup>
     <PackageReference Include="WindowsInput" Version="6.4.1" />
+
+    <EmbeddedResource Include="Audio\1.wav" />
+    <EmbeddedResource Include="Audio\2.wav" />
+    <EmbeddedResource Include="Audio\3.wav" />
+    <EmbeddedResource Include="Audio\4.wav" />
+    <EmbeddedResource Include="Audio\5.wav" />
+    <EmbeddedResource Include="Audio\6.wav" />
+    <EmbeddedResource Include="Audio\关闭键盘监听.wav" />
+    <EmbeddedResource Include="Audio\开启键盘监听.wav" />
   </ItemGroup>
 
 </Project>

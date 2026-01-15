@@ -4,6 +4,7 @@ using WindowsInput.Events.Sources;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Media;
+using System.Reflection;
 
 namespace ConsoleApp1;
 
@@ -80,6 +81,32 @@ class Program
     private static int MouseMovementSpeed4 = -1;
     #endregion 
 
+    /// <summary>
+    /// 提示音
+    /// </summary>
+    private static void PlayEmbeddedBeep(string name)
+    {
+        // 注意：假设文件已转换为 1.wav
+        string resourceName = $"ConsoleApp1.Audio.{name}.wav";
+        var assembly = Assembly.GetExecutingAssembly();
+
+        using (var stream = assembly.GetManifestResourceStream(resourceName))
+        {
+            if (stream != null)
+            {
+                using (var player = new SoundPlayer(stream))
+                {
+                    player.Play(); // 异步播放
+                }
+            }
+            else
+            {
+                Console.WriteLine($"未找到嵌入式资源: {resourceName}");
+                // 可列出所有资源名以调试
+                // foreach (var name in assembly.GetManifestResourceNames()) Console.WriteLine(name);
+            }
+        }
+    }
     // 1. 定义与C语言中POINT结构对应的结构体
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
@@ -150,7 +177,7 @@ class Program
         // 加挡位
         if (i)
         {
-            if (CursorSpeedMode == 4)
+            if (CursorSpeedMode == 6)
             {
                 System.Console.WriteLine("已经是最高挡位了");
             }
@@ -177,6 +204,8 @@ class Program
                 }
             }
         }
+        string d=CursorSpeedMode.ToString();
+        PlayEmbeddedBeep(d);
         System.Console.WriteLine($"当前挡位:{CursorSpeedMode}");
         System.Console.WriteLine($"基础速率:{BasicsSpeed}");
     }
@@ -297,6 +326,15 @@ class Program
             // 取反
             KeyMonitorState = !KeyMonitorState;
             e.Next_Hook_Enabled = !KeyMonitorState;
+
+            if (KeyMonitorState)
+            {
+                PlayEmbeddedBeep("开启键盘监听");
+            }
+            else
+            {
+                PlayEmbeddedBeep("关闭键盘监听");
+            }
             Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState}");
             Console.WriteLine("alt+q组合键已按下");
             SystemSounds.Beep.Play();
@@ -425,9 +463,9 @@ class Program
             }
             if (Ukey == KeyCode.P)
             {
-                Simulate.Events() 
+                Simulate.Events()
                     .Click(KeyCode.End)
-                    .Invoke(); 
+                    .Invoke();
                 Console.WriteLine("当前动作:End键");
             }
             #region 按下空格键+其他键
