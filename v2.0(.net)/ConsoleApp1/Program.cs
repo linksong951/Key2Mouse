@@ -4,6 +4,7 @@ using WindowsInput.Events.Sources;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using WindowsInput;
+using InputSimulatorEx;
 
 namespace ConsoleApp1;
 
@@ -100,6 +101,8 @@ class Program
     [DllImport("user32.dll")]
     private static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
 
+
+    private static InputSimulator _simulator = new InputSimulator();
     static async Task Main(string[] args)
     {
         // 创建监听
@@ -171,7 +174,6 @@ class Program
 
     private static void Keyboard_keyEvent(object sender, EventSourceEventArgs<KeyboardEvent> e)
     {
-        e.Next_Hook_Enabled = !KeyMonitorState;
         var Dkey = e.Data?.KeyDown?.Key;
         var Ukey = e.Data?.KeyUp?.Key;
 
@@ -263,7 +265,7 @@ class Program
             KeyMonitorState = !KeyMonitorState;
 
             // 键盘监听变量KeyMonitorState为true则组织默认键盘输入反之则不阻止
-            e.Next_Hook_Enabled = !KeyMonitorState;
+            // e.Next_Hook_Enabled = !KeyMonitorState;
             Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState}");
             Console.WriteLine("alt+q组合键已按下");
         }
@@ -280,6 +282,7 @@ class Program
         // 键盘监听状态变量为true并且映射模式为true(1)
         if (KeyMonitorState && CurrentMode)
         {
+            e.Next_Hook_Enabled = false;
             // 鼠标左移动
             if (Dkey == KeyCode.J)
             {
@@ -410,137 +413,122 @@ class Program
         // 键盘监听状态变量为false并且映射模式为false(2)
         if (KeyMonitorState && CurrentMode == false)
         {
+            // 当前问题
+            // 1.使用松开实现按键输入 但没办法实现按住之后连续触发
             // 按键左按下
             if (Dkey == KeyCode.J)
             {
-                KeyEvent(KeyCode.Left);
+                e.Next_Hook_Enabled = false;
                 Console.WriteLine($"--模式2--按键左按下");
             }
-            // 按键下按下
-            if (Dkey == KeyCode.K)
+            // 按键左松开
+            if (Ukey == KeyCode.J)
             {
-                Simulate.Events()
-                        .Click(KeyCode.Down)
-                        .Invoke();
-                Console.WriteLine($"--模式2--按键下按下");
-            }
-            // // 按键下松开
-            // if (Ukey == KeyCode.K)
-            // {
-            //     Simulate.Events()
-            //             .Release(KeyCode.Down)
-            //             .Invoke();
-            //     Console.WriteLine($"--模式2--按键下松开");
-            // }
-            // 按键上按下
-            if (Dkey == KeyCode.I)
-            {
-                Simulate.Events()
-                        .Hold(KeyCode.Up)
-                        .Invoke();
-                Console.WriteLine($"--模式2--按键上按下");
-            }
-            // 按键上松开
-            if (Ukey == KeyCode.I)
-            {
-                Simulate.Events()
-                        .Release(KeyCode.Up)
-                        .Invoke();
-                Console.WriteLine($"--模式2--按键上松开");
+                e.Next_Hook_Enabled = true;
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.Left);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键左松开");
             }
             // 按键右按下
             if (Dkey == KeyCode.L)
             {
-                Simulate.Events()
-                        .Hold(KeyCode.Right)
-                        .Invoke();
+                e.Next_Hook_Enabled = false;
                 Console.WriteLine($"--模式2--按键右按下");
             }
             // 按键右松开
             if (Ukey == KeyCode.L)
             {
-                Simulate.Events()
-                        .Release(KeyCode.Right)
-                        .Invoke();
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.Right);
+                sim.Invoke();
                 Console.WriteLine($"--模式2--按键右松开");
             }
-            // Home键按下
+            // 按键上按下
+            if (Dkey == KeyCode.I)
+            {
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键上按下");
+            }
+            // 按键上松开
+            if (Ukey == KeyCode.I)
+            {
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.Up);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键上松开");
+            }
+            // 按键下按下
+            if (Dkey == KeyCode.K)
+            {
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键下按下");
+            }
+            // 按键下松开
+            if (Ukey == KeyCode.K)
+            {
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.Down);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键下松开");
+            }
+            // 按键Home按下
             if (Dkey == KeyCode.A)
             {
-                Simulate.Events()
-                        .Hold(KeyCode.Home)
-                        .Invoke();
-                Console.WriteLine($"--模式2--Home键按下");
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键Home按下");
             }
-            // Home键松开
+            // 按键Home松开
             if (Ukey == KeyCode.A)
             {
-                Simulate.Events()
-                        .Release(KeyCode.Home)
-                        .Invoke();
-                Console.WriteLine($"--模式2--Home键松开");
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.Home);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键Home松开");
             }
-            // End键按下
+            // 按键End按下
             if (Dkey == KeyCode.F)
             {
-                Simulate.Events()
-                        .Hold(KeyCode.End)
-                        .Invoke();
-                Console.WriteLine($"--模式2--End键按下");
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键End按下");
             }
-            // End键松开
+            // 按键End松开
             if (Ukey == KeyCode.F)
             {
-                Simulate.Events()
-                        .Release(KeyCode.End)
-                        .Invoke();
-                Console.WriteLine($"--模式2--End键松开");
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.End);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键End按下");
             }
-            // PageUp键按下
+            // 按键PageUp按下
             if (Dkey == KeyCode.S)
             {
-                Simulate.Events()
-                        .Hold(KeyCode.PageUp)
-                        .Invoke();
-                Console.WriteLine($"--模式2--PageUp键按下");
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键PageUp按下");
             }
-            // PageUp键松开
+            // 按键PageUp松开
             if (Ukey == KeyCode.S)
             {
-                Simulate.Events()
-                        .Release(KeyCode.PageUp)
-                        .Invoke();
-                Console.WriteLine($"--模式2--PageUp键松开");
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.PageUp);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键PageUp松开");
             }
-            // PageDown键按下
+            // 按键PageDown按下
             if (Dkey == KeyCode.D)
             {
-                Simulate.Events()
-                        .Hold(KeyCode.PageDown)
-                        .Invoke();
-                Console.WriteLine($"--模式2--PageDown键按下");
+                e.Next_Hook_Enabled = false;
+                Console.WriteLine($"--模式2--按键PageDown按下");
             }
-            // PageDown键松开
+            // 按键PageDown松开
             if (Ukey == KeyCode.D)
             {
-                Simulate.Events()
-                        .Release(KeyCode.PageDown)
-                        .Invoke();
-                Console.WriteLine($"--模式2--PageDown键松开");
+                var sim = Simulate.Events();
+                sim.Click(KeyCode.PageDown);
+                sim.Invoke();
+                Console.WriteLine($"--模式2--按键PageDown松开");
             }
         }
         #endregion
-    }
-
-    /// <summary>
-    /// 暂时留给上下左右键
-    /// </summary>
-    /// <param name="keyCode"></param>
-    public static void KeyEvent(KeyCode keyCode)
-    {
-        Simulate.Events()
-            .Click(KeyCode.Left)
-            .Invoke()
-            ;
     }
 }

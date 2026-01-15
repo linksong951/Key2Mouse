@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="InputSimulatorEx" Version="2.1.1" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
   </ItemGroup>
 
