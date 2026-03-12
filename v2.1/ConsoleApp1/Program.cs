@@ -332,8 +332,15 @@ class Program
             // 取反
             KeyMonitorState = !KeyMonitorState;
             if (!KeyMonitorState)
-            {  
+            {
                 KeyMonitorState2 = false;
+                // 播报关闭键盘模拟鼠标
+                // PlayEmbeddedBeep("关闭键盘模拟鼠标");
+            }
+            else
+            {
+                // 播报开启键盘模拟鼠标
+                // PlayEmbeddedBeep("开启键盘模拟鼠标"); 
             }
             Console.WriteLine("alt+q组合键已按 下");
         }
@@ -348,11 +355,11 @@ class Program
             e.Next_Hook_Enabled = !KeyMonitorState;
             if (KeyMonitorState2)
             {
-                PlayEmbeddedBeep("开启键盘监听");
+                // PlayEmbeddedBeep("开启键盘监听");
             }
             else
             {
-                PlayEmbeddedBeep("关闭键盘监听");
+                // PlayEmbeddedBeep("关闭键盘监听");
             }
             Console.WriteLine(@$"键盘操作鼠标功能当前状态:{KeyMonitorState2}");
         }
@@ -484,6 +491,21 @@ class Program
                     .Click(KeyCode.End)
                     .Invoke();
                 Console.WriteLine("当前动作:End键");
+            }
+
+            // 功能针对向按键
+            // 浏览器谷歌翻译发音
+            if (Dkey == KeyCode.V)
+            {
+                e.Next_Hook_Enabled = false;
+            }
+            if (Ukey == KeyCode.V)
+            {
+                Simulate.Events()
+                    .MoveTo(666, 400)
+                    .Click(ButtonCode.Left)
+                    .Invoke();
+                Console.WriteLine("当前动作:浏览器谷歌翻译发音");
             }
             #region 按下空格键+其他键
 
