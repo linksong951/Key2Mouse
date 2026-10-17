@@ -20,6 +20,12 @@
     <EmbeddedResource Include="Audio\开启键盘监听.wav" />
     <EmbeddedResource Include="Audio\开启键盘模拟鼠标.wav" />
     <EmbeddedResource Include="Audio\关闭键盘模拟鼠标.wav" />
+    
+    <Content Include="功能手册.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+
   </ItemGroup>
 
 </Project>

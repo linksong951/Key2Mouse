@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Media;
 using System.Reflection;
+using System.Text.Unicode;
+using System.Text;
 
 namespace ConsoleApp1;
 
@@ -138,7 +140,14 @@ class Program
         using (var keyboard = WindowsInput.Capture.Global.KeyboardAsync())
         {
             keyboard.KeyEvent += Keyboard_keyEvent;
+
+            // 读取功能手册输出出来
+            string filepath = Path.Combine(AppContext.BaseDirectory, "功能手册.txt");
+            string content = File.ReadAllText(filepath, Encoding.UTF8);
             Console.WriteLine("加载完毕!!");
+            System.Console.WriteLine("===========================================");
+            System.Console.WriteLine(content);
+            System.Console.WriteLine("===========================================");
             Console.ReadLine();
         }
     }
@@ -418,6 +427,24 @@ class Program
                         .Invoke();
                 Console.WriteLine("当前动作:鼠标左键松开");
             }
+            // 鼠标左键按下 ;
+            if (Dkey == KeyCode.Oem1)
+            {
+                e.Next_Hook_Enabled = false;
+                Simulate.Events()
+                        .Hold(ButtonCode.Left)
+                        .Invoke();
+                Console.WriteLine("当前动作:鼠标左键按下 ;;");
+            }
+            // 鼠标左键松开 ;
+            if (Ukey == KeyCode.Oem1)
+            {
+                e.Next_Hook_Enabled = false;
+                Simulate.Events()
+                        .Release(ButtonCode.Left)
+                        .Invoke();
+                Console.WriteLine("当前动作:鼠标左键松开 ;;");
+            }
             // 鼠标中键按下
             if (Dkey == KeyCode.S)
             {
@@ -447,6 +474,24 @@ class Program
             }
             // 鼠标右键松开
             if (Ukey == KeyCode.F)
+            {
+                e.Next_Hook_Enabled = false;
+                Simulate.Events()
+                        .Release(ButtonCode.Right)
+                        .Invoke();
+                Console.WriteLine("当前动作:鼠标右键松开");
+            }
+            // 鼠标右键按下
+            if (Dkey == KeyCode.Oem7)
+            {
+                e.Next_Hook_Enabled = false;
+                Simulate.Events()
+                        .Hold(ButtonCode.Right)
+                        .Invoke();
+                Console.WriteLine("当前动作:鼠标右键按下");
+            }
+            // 鼠标右键松开
+            if (Ukey == KeyCode.Oem7)
             {
                 e.Next_Hook_Enabled = false;
                 Simulate.Events()
@@ -493,20 +538,20 @@ class Program
                 Console.WriteLine("当前动作:End键");
             }
 
-            // 功能针对向按键
-            // 浏览器谷歌翻译发音
-            if (Dkey == KeyCode.V)
-            {
-                e.Next_Hook_Enabled = false;
-            }
-            if (Ukey == KeyCode.V)
-            {
-                Simulate.Events()
-                    .MoveTo(666, 400)
-                    .Click(ButtonCode.Left)
-                    .Invoke();
-                Console.WriteLine("当前动作:浏览器谷歌翻译发音");
-            }
+            // // 功能针对向按键
+            // // 浏览器谷歌翻译发音
+            // if (Dkey == KeyCode.V)
+            // {
+            //     e.Next_Hook_Enabled = false;
+            // }
+            // if (Ukey == KeyCode.V)
+            // {
+            //     Simulate.Events()
+            //         .MoveTo(666, 400)
+            //         .Click(ButtonCode.Left)
+            //         .Invoke();
+            //     Console.WriteLine("当前动作:浏览器谷歌翻译发音");
+            // }
             #region 按下空格键+其他键
 
             #region 鼠标移动速度--
