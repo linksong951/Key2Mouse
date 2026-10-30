@@ -4,14 +4,6 @@ using Key2Mouse.Mouse;
 using Key2Mouse.Native;
 using System.Text;
 using WindowsInput;
-using WindowsInput.Events;
-using WindowsInput.Events.Sources;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using System.Media;
-using System.Reflection;
-using System.Text.Unicode;
-using System.Text;
 
 namespace Key2Mouse;
 

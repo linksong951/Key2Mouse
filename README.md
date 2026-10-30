@@ -10,6 +10,8 @@
 
 本项目通过全局键盘钩子监听按键状态，并使用 Win32 API（`SetCursorPos`、`mouse_event`）模拟鼠标行为，配合 WindowsInput 库实现按键拦截。适用于需要在键盘与鼠标之间频繁切换的场景（如阅读、远程操作、单手握持设备等）。
 
+项目采用**整洁架构（Clean Architecture）**分层组织代码：`Input` 处理键盘状态与业务，`Mouse` 封装所有鼠标副作用，`Native` 集中 P/Invoke，`Audio` 负责提示音，`Program` 只做装配与启动。
+
 ---
 
 ## 功能特性
@@ -28,14 +30,14 @@
 ## 环境要求
 
 * Windows 10 / 11
-* .NET 6.0 或更高（使用了 top-level `Main` 和 `async Task Main`）
-* 依赖库：[WindowsInput](https://github.com/michaelnoonan/inputsimulator)（含 `WindowsInput.Events.Sources` 命名空间）
+* .NET 10（项目目标框架为 `net10.0-windows`）
+* 依赖库：[WindowsInput](https://github.com/michaelnoonan/inputsimulator) `6.4.1`（使用其 `WindowsInput.Events.Sources` 命名空间）
 
 ---
 
 ## 快速开始
 
-1. 编译项目，确保 `功能手册.txt` 与音频资源（`ConsoleApp1.Audio.*.wav`）已嵌入/置于输出目录。
+1. 编译项目，确保 `功能手册.txt` 与音频资源（`Key2Mouse.Audio.*.wav`）已嵌入/置于输出目录。
 2. 运行程序，控制台会打印功能手册并进入监听状态。
 3. 按 `Alt + Q` 激活功能，再按 `CapsLock` 打开监听（二重锁）。
 4. 使用下方操作速查表中的按键控制鼠标。
@@ -86,8 +88,8 @@
 
 | 按键  | 功能     |
 | ----- | -------- |
-| `H` | 滚轮向上 |
-| `O` | 滚轮向下 |
+| `O` | 滚轮向上 |
+| `H` | 滚轮向下 |
 
 ### 其他
 
@@ -125,37 +127,83 @@
 
 ---
 
+## 项目结构
+
+采用整洁架构分层，各层职责单一、互相隔离：
+
+```text
+Key2Mouse/
+├── Program.cs                      # 入口：DPI 感知、依赖装配、启动监听、打印手册
+├── Key2Mouse.csproj                # net10.0-windows + WindowsInput 6.4.1 + 资源声明
+├── 功能手册.txt                    # 启动时读取并打印到控制台
+├── README.md
+│
+├── Native/                         # ← 平台互操作层
+│   ├── NativeMethods.cs            #   所有 user32.dll P/Invoke 与常量
+│   └── POINT.cs                    #   与 Win32 POINT 对齐的结构体
+│
+├── Audio/                          # ← 音频层
+│   ├── EmbeddedBeepPlayer.cs       #   播放内嵌 wav 提示音
+│   ├── 1.wav ~ 6.wav               #   六档速度提示音
+│   ├── 开启键盘监听.wav
+│   ├── 关闭键盘监听.wav
+│   ├── 开启键盘模拟鼠标.wav
+│   └── 关闭键盘模拟鼠标.wav
+│
+├── Mouse/                          # ← 鼠标动作层
+│   ├── MouseController.cs          #   移动 / 滚动 / 调速 统一封装
+│   └── MouseSpeedSettings.cs       #   速度状态 + 档位迁移规则
+│
+└── Input/                          # ← 输入业务层
+    ├── KeyboardToMouseHandler.cs   #   键盘事件 → 鼠标动作（核心业务）
+    └── KeyStateTracker.cs          #   按键状态跟踪（Alt/Space/I/J/K/L）
+```
+
+
+
+### 分层依赖方向
+
+**text**
+
+```
+Program ──► Input ──► Mouse ──► Audio
+   │           │         │
+   └───────────┴─────────┴──► Native
+```
+
+* `Input` 只依赖 `Mouse` 的抽象接口；
+* `Mouse` 依赖 `Audio` 与 `Native`；
+* `Native` 是最底层，不依赖任何上层；
+* `Program` 只负责装配与触发。
+
+---
+
 ## 已知问题 / TODO
 
-* [X] 多显示器坐标卡死问题（已通过 `SetCursorPos` + 虚拟桌面边界钳制修复，待进一步回归验证）
-* [ ] 斜向移动逻辑分散在多处，可在后续版本中合并优化
-* [ ] 提示音文件依赖嵌入资源路径 `ConsoleApp1.Audio.{name}.wav`，缺少时仅打印提示
+* **☑  **多显示器坐标卡死问题（已通过 `SetCursorPos` + 虚拟桌面边界钳制修复）
+* **☑  **单文件"万能 Program.cs"重构为整洁架构多文件分层
+* **☑  **斜向移动逻辑集中于 `KeyboardToMouseHandler.HandleDiagonal`，便于后续合并优化
+* **□  **提示音文件依赖嵌入资源路径 `Key2Mouse.Audio.{name}.wav`，缺少时仅打印提示
+* **□  **`功能手册.txt` 中"滚轮上/下"的描述与代码实际行为（H 向上、O 向下）待核实统一
 
 ---
 
 ## 更新日志
+
+### v3.0 —— 架构重构
+
+* 将单文件 `Program.cs` 拆分为整洁架构多目录（`Native` / `Audio` / `Mouse` / `Input`）
+* 速度相关状态收拢到 `MouseSpeedSettings`
+* 鼠标副作用统一由 `MouseController` 封装
+* 键盘状态由 `KeyStateTracker` 独立管理
+* 业务逻辑拆为 `KeyboardToMouseHandler` 中的多个语义化方法
+* 命名空间由 `ConsoleApp1` 更名为 `Key2Mouse`
 
 ### v2.2
 
 * 新增 `'` 键作为鼠标右键
 * 完善多屏坐标处理（`SetCursorPos` + 虚拟桌面边界）
 * 补充 `SetProcessDPIAware` DPI 感知
-
----
-
-## 目录结构（参考）
-
-**text**
-
-```
-ConsoleApp1/
-├── Program.cs              # 主程序：监听、状态机、鼠标模拟
-├── 功能手册.txt            # 启动时读取并打印到控制台
-├── README.md
-├── 存在待解决优化.md       # 待办事项
-├── Audio/                  # 内嵌提示音（1.wav ~ 6.wav）
-└── ...
-```
 
 ---
 
