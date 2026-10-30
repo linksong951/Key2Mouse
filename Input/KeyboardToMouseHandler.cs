@@ -53,7 +53,7 @@ public sealed class KeyboardToMouseHandler
             _state.MonitorEnabled = !_state.MonitorEnabled;
             if (!_state.MonitorEnabled) _state.SimulatorEnabled = false;
 
-            _feedback.PlayBeep(_state.MonitorEnabled ? "开启键盘模拟鼠标" : "关闭键盘模拟鼠标");
+            // _feedback.PlayBeep(_state.MonitorEnabled ? "开启键盘模拟鼠标" : "关闭键盘模拟鼠标");
             _feedback.MonitorStateChanged(_state.MonitorEnabled, _state.SimulatorEnabled);
             return true;
         }
@@ -69,7 +69,7 @@ public sealed class KeyboardToMouseHandler
             _state.SimulatorEnabled = !_state.SimulatorEnabled;
             e.Next_Hook_Enabled = !_state.MonitorEnabled;
 
-            _feedback.PlayBeep(_state.SimulatorEnabled ? "开启键盘监听" : "关闭键盘监听");
+            // _feedback.PlayBeep(_state.SimulatorEnabled ? "开启键盘监听" : "关闭键盘监听");
             _feedback.MonitorStateChanged(_state.MonitorEnabled, _state.SimulatorEnabled);
             return true;
         }
