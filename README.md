@@ -190,6 +190,12 @@ Program ──► Input ──► Mouse ──► Audio
 
 ## 更新日志
 
+### v3.1 —— README 与手册对齐
+
+* 滚轮方向以 `功能手册.txt` 为准：`H` 滚轮向下、`O` 滚轮向上
+* 移除"滚轮方向待核实"伪问题（根因是日志文案与 `VerticalScroll` 符号未成对维护）
+* 新增"滚轮方向约定"小节，明确 `MOUSEEVENTF_WHEEL` 正负语义
+
 ### v3.0 —— 架构重构
 
 * 将单文件 `Program.cs` 拆分为整洁架构多目录（`Native` / `Audio` / `Mouse` / `Input`）

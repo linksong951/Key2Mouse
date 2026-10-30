@@ -161,7 +161,7 @@ public sealed class KeyboardToMouseHandler
     }
 
     // ---------------------------------------------------------------
-    // 滚轮（H = 上滑 / O = 下滑）
+    // 滚轮（H = 下滑 / O = 上滑）
     // ---------------------------------------------------------------
     private void HandleScroll(KeyCode? dKey, EventSourceEventArgs<KeyboardEvent> e)
     {
@@ -169,13 +169,13 @@ public sealed class KeyboardToMouseHandler
         {
             e.Next_Hook_Enabled = false;
             _mouse.VerticalScroll(-120);
-            Console.WriteLine("当前动作:鼠标滚轮上滑");
+            Console.WriteLine("当前动作:鼠标滚轮下滑");
         }
         if (dKey == KeyCode.O)
         {
             e.Next_Hook_Enabled = false;
             _mouse.VerticalScroll(120);
-            Console.WriteLine("当前动作:鼠标滚轮下滑");
+            Console.WriteLine("当前动作:鼠标滚轮上滑");
         }
     }
 
