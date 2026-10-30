@@ -1,4 +1,4 @@
-﻿using WindowsInput;
+﻿﻿using WindowsInput;
 using WindowsInput.Events;
 using WindowsInput.Events.Sources;
 using System.Runtime.InteropServices;
@@ -130,11 +130,40 @@ class Program
     [DllImport("user32.dll")]
     private static extern bool GetCursorPos(out POINT lpPoint);
 
+    /// <summary>
+    /// 直接设置鼠标位置（支持多显示器、负坐标，绕开归一化）
+    /// </summary>
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int X, int Y);
+
     // 导入user32.dll中的mouse_event函数
     [DllImport("user32.dll")]
     private static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
+
+    // ===== 多显示器支持所需的 P/Invoke =====
+
+    /// <summary>
+    /// 声明进程为 DPI 感知，保证多屏不同缩放下坐标一致
+    /// </summary>
+    [DllImport("user32.dll")]
+    private static extern bool SetProcessDPIAware();
+
+    /// <summary>
+    /// 获取系统度量（用于取得虚拟桌面边界）
+    /// </summary>
+    [DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int nIndex);
+
+    // 虚拟屏幕（所有显示器合并后的整个桌面）度量索引
+    private const int SM_XVIRTUALSCREEN  = 76; // 虚拟屏幕左上角 X
+    private const int SM_YVIRTUALSCREEN  = 77; // 虚拟屏幕左上角 Y
+    private const int SM_CXVIRTUALSCREEN = 78; // 虚拟屏幕宽
+    private const int SM_CYVIRTUALSCREEN = 79; // 虚拟屏幕高
+
     static async Task Main(string[] args)
     {
+        // 声明 DPI 感知，避免多屏不同缩放导致坐标错位
+        SetProcessDPIAware();
 
         // 创建监听
         using (var keyboard = WindowsInput.Capture.Global.KeyboardAsync())
@@ -225,29 +254,33 @@ class Program
         System.Console.WriteLine($"基础速率:{BasicsSpeed}");
     }
     /// <summary>
-    /// 更新鼠标坐标
+    /// 更新鼠标坐标（支持多显示器，使用虚拟桌面边界钳制）
     /// </summary>
     /// <param name="increatex">要增加或修改的x轴方向</param>
     /// <param name="increateY">要增加或修改的y轴方向</param>
     private static void PutCursor_xy(int increatex, int increateY)
     {
         POINT cursorPos = GetCursor_xy();
-        int x = cursorPos.X;
-        int y = cursorPos.Y;
-        x += increatex * BasicsSpeed;
-        y += increateY * BasicsSpeed;
-        // 判断x和y最后位置任意一个是负的就默认为0
-        if (x < 0)
-        {
-            x = 0;
-        }
-        if (y < 0)
-        {
-            y = 0;
-        }
-        Simulate.Events()
-            .MoveTo(x, y)
-            .Invoke();
+
+        int x = cursorPos.X + increatex * BasicsSpeed;
+        int y = cursorPos.Y + increateY * BasicsSpeed;
+
+        // 用虚拟屏幕（所有显示器合并后的整个桌面）的边界做钳制
+        // 副屏在主屏左侧/上方时，minX/minY 为负数，此时不能简单把负数改成 0
+        int minX = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        int minY = GetSystemMetrics(SM_YVIRTUALSCREEN);
+        int maxX = minX + GetSystemMetrics(SM_CXVIRTUALSCREEN) - 1;
+        int maxY = minY + GetSystemMetrics(SM_CYVIRTUALSCREEN) - 1;
+
+        if (x < minX) x = minX;
+        if (y < minY) y = minY;
+        if (x > maxX) x = maxX;
+        if (y > maxY) y = maxY;
+
+        // 关键修复：不再用 Simulate.Events().MoveTo(...)
+        // 该库内部用 SM_CXSCREEN 归一化 MOUSEEVENTF_ABSOLUTE，跨屏时会溢出
+        // SetCursorPos 直接接收虚拟桌面物理坐标，跨屏可靠
+        SetCursorPos(x, y);
     }
     #endregion
 
