@@ -32,6 +32,7 @@
 * Windows 10 / 11
 * .NET 10（项目目标框架为 `net10.0-windows`）
 * 依赖库：[WindowsInput](https://github.com/michaelnoonan/inputsimulator) `6.4.1`（使用其 `WindowsInput.Events.Sources` 命名空间）
+* **WinForms**：`<UseWindowsForms>true</UseWindowsForms>`（`NotifyIcon` 依赖，仅 Windows）
 
 ---
 
@@ -153,13 +154,14 @@ Key2Mouse/
 ├── Mouse/                          # ← 鼠标动作层
 │   ├── MouseController.cs          #   移动 / 滚动 / 调速 统一封装
 │   └── MouseSpeedSettings.cs       #   速度状态 + 档位迁移规则
+├── Ui/                          	# ← 用户反馈层
+│   ├── MouseController.cs          #   反馈统一入口（日志 + 音效 + 托盘）
+│   └── MouseSpeedSettings.cs       #   系统托盘图标（ON/OFF 视觉状态）
 │
 └── Input/                          # ← 输入业务层
     ├── KeyboardToMouseHandler.cs   #   键盘事件 → 鼠标动作（核心业务）
     └── KeyStateTracker.cs          #   按键状态跟踪（Alt/Space/I/J/K/L）
 ```
-
-
 
 ### 分层依赖方向
 
@@ -189,6 +191,15 @@ Program ──► Input ──► Mouse ──► Audio
 ---
 
 ## 更新日志
+
+### v3.2 —— 反馈强化 + 托盘状态
+
+* 恢复 `Alt+Q` / `CapsLock` 切换时的内嵌提示音
+* 新增系统托盘图标（`Ui/TrayIcon.cs`）：ON 蓝 i / OFF 默认图标，Tooltip 同步状态，右键退出
+* 新增 `Ui/Feedback.cs` 作为用户反馈统一入口（控制台日志 + 音效 + 托盘状态）
+* `MouseController` / `KeyboardToMouseHandler` 不再直接 `Console.WriteLine`，改为 `_feedback.Action(...)`
+* **未采用**"控制台底部单行原地刷新"：极端场景下用户需用 Windows 自带鼠标键（`Alt+左Shift+NumLock`）操作终端，原地刷新会破坏日志的可滚动性与可选中/可复制性
+* 控制台仍保留**逐行日志**，可正常滚动、拖选、复制
 
 ### v3.1 —— README 与手册对齐
 

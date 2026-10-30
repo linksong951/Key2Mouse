@@ -2,6 +2,7 @@
 using Key2Mouse.Input;
 using Key2Mouse.Mouse;
 using Key2Mouse.Native;
+using Key2Mouse.Ui;
 using System.Text;
 using WindowsInput;
 
@@ -11,21 +12,25 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        // DPI 感知：避免多屏不同缩放下坐标错位
         NativeMethods.SetProcessDPIAware();
 
-        // 依赖装配（手写 DI，够用就好）
+        // 依赖装配
         var speedSettings = new MouseSpeedSettings();
         var beepPlayer    = new EmbeddedBeepPlayer();
-        var mouse         = new MouseController(speedSettings, beepPlayer);
-        var handler       = new KeyboardToMouseHandler(mouse);
+        var trayIcon      = new TrayIcon();
+        var feedback      = new Feedback(beepPlayer, trayIcon);
+        var mouse         = new MouseController(speedSettings, feedback);
+        var handler       = new KeyboardToMouseHandler(mouse, feedback);
 
         PrintManual();
+
+        trayIcon.Start();
 
         using var keyboard = Capture.Global.KeyboardAsync();
         keyboard.KeyEvent += handler.Handle;
 
         Console.ReadLine();
+        trayIcon.Dispose();
     }
 
     private static void PrintManual()
