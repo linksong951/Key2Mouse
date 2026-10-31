@@ -1,6 +1,6 @@
-# Keyboard-operation-and-mouse-control
+# Key2Mouse
 
-# 键盘操作鼠标 (Keyboard-operation-and-mouse-control)
+# 键盘操作鼠标 (Key2Mouse)
 
 一个基于 C# / .NET 的 Windows 控制台小工具： **用键盘替代鼠标** ，在不离开键盘的情况下完成鼠标移动、点击、滚轮、Home/End 等操作，移动时不会触发按键本身的字符输入。
 
